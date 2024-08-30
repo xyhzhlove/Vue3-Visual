@@ -1,0 +1,15 @@
+{
+    "name": "zh-ui",
+    "version": "1.0.0",
+    "main": "index.ts",
+    "scripts": {
+      "build": "vite build & esno build/buildLess"
+    },
+    "keywords": [
+      "zh-ui",
+      "vue3组件库"
+    ],
+    "author": "",
+    "license": "MIT",
+    "description": ""
+  }

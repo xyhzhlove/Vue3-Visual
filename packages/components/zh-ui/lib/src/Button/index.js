@@ -1,0 +1,1 @@
+"use strict";Object.defineProperties(exports,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}});const n=require("./index.vue.js"),l=e=>(e.install=t=>{t.component(e.name,e)},e),u=l(n.default);exports.default=u;
