@@ -1,7 +1,7 @@
 import Button from './Button'
 import {} from "@zh"
 export {
-    Button,
+    Button
 }
 export default [Button] 
 // 等效 export {Button:Button}

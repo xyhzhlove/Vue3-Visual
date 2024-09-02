@@ -642,4 +642,162 @@ pnpm publish --access public
 注意
 发布的时候要将npm的源切换到npm的官方地址(registry.npmjs.org/[2]); 如果你使用了其它镜像源的话
 
+## 题外话
+### 语法检查
+#### 安装包
+eslint相关的包
+@eslint/js
+eslint
+eslint-plugin-vue
+typescript-eslint
+vite-plugin-eslint
+
+##### vite.config.ts
+这里主要是引用vite-plugin-eslint，使vite启动的时候可以校验eslint信息
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import eslint from 'vite-plugin-eslint'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue(), {
+    // do not fail on serve (i.e. local development)
+    ...eslint({
+      failOnWarning: false,
+      failOnError: false
+    }),
+    apply: 'serve',
+    enforce: 'post'
+  }],
+})
+```
+
+##### eslint.config.js文件
+会逐层向上读取 eslint.config.json中的配置
+```js
+// 引入vue模版的eslint
+import pluginVue from 'eslint-plugin-vue'
+import eslint from '@eslint/js'
+// ts-eslint解析器，使 eslint 可以解析 ts 语法
+import tseslint from 'typescript-eslint'
+// vue文件解析器
+import vueParser from 'vue-eslint-parser'
+export default tseslint.config({
+  // tseslint.config添加了extends扁平函数，直接用。否则是eslint9.0版本是没有extends的
+  extends: [
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    ...pluginVue.configs['flat/essential'] // vue3推荐的eslint配置
+  ],
+  languageOptions: {
+    parser: vueParser, // 使用vue解析器，这个可以识别vue文件
+    parserOptions: {
+      parser: tseslint.parser, // 在vue文件上使用ts解析器
+      sourceType: 'module'
+    }
+  },
+  rules: {
+    'semi': ['warn', 'never'],
+    "comma-dangle": ["error", "never"],
+    "no-unused-vars": 2,
+    'space-before-function-paren': 0,
+    'generator-star-spacing': 'off',
+    'object-curly-spacing': 0, // 强制在大括号中使用一致的空格
+    'array-bracket-spacing': 0 // 方括号
+  }
+})
+
+```
+
+##### package.json的type字段
+package.json中的type字段值要为 module，否则无法使用es module 模块化语法。如果type字段值为 commonjs
+默认表示项目使用的是 CommonJS 模块系统。CommonJS 是 Node.js 中传统的模块加载机制，使用 require 导入模块，并使用 module.exports 或 exports 导出模块。
+
+#### package.json中script进行配置
+```
+   "lint": "eslint",
+   "lint:fix": "eslint --fix",
+```
+### 代码格式化配置
+会逐层向上读取读取 .prettierrc .prettierignore 中的配置
+
+#### 安装
+```
+pnpm add --save-dev --save-exact prettier
+```
+#### 创建格式化的规则的文件
+项目根目录新建 .prettierrc
+基本配置
+```
+{
+  "trailingComma": "es5",
+  "tabWidth": 4,
+  "semi": false,
+  "singleQuote": true
+}
+```
+
+#### 配置忽略检查格式的文件
+项目根目录下新建 .prettierignore
+填充相关内容
+
+#### package.json中进行配置
+```
+ "prettier": "prettier . --write"
+```
+
+### 代码提交配置
+#### 安装 commitlint
+```
+npm install --save-dev @commitlint/config-conventional  @commitlint/cli
+```
+
+#### 项目目录下创建commitlint配置文件：
+commitlint.config.js
+```
+export default {
+    extends: ['@commitlint/config-conventional']
+  }
+  
+```
+逐层向上读取 commitlint.config.js 配置文件
+#### 安装lint-stage husky (配合commitlint使用)
+##### 安装lint-stage
+lint-stage代码lint工具 只处理暂存区文件，husky git钩子工具
+```
+pnpm i -D lint-staged -w 
+```
+
+##### 安装husky
+pnpm i husky -D -w
+
+##### 通过husky安装两个hook
+###### 初始化.husky文件夹
+```
+npx husky install
+```
+
+###### 再添加一个pre-commit hook 代码提交时 用来执行lint-staged命令
+# --no-install 参数表示强制npx使用项目本地安装的commitlint 和 lint-staged npm包
+npx husky add .husky/commit-msg 'npx --no-install commitlint --edit $1'
+
+###### package.json中的文件修改
+package.json添加如下内容(样式校验会在后面说明)
+"husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "npx --no-install commitlint --edit $1"
+    }
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "stylelint --config  ./.stylelintrc --fix",
+      "eslint --fix"
+    ],
+    "*.{less,css}": [
+      "stylelint --config  ./.stylelintrc --fix"
+    ]
+  }
+
 

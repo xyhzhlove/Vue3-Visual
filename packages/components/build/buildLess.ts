@@ -22,7 +22,7 @@ const buildLess = async () => {
     const lessFils = await glob("**/*.less", { cwd: srcDir, onlyFiles: true })
  
     //遍历含有less的目录
-    for (let path in lessFils) {
+    for (const path in lessFils) {
  
         const filePath = `${srcDir}/${lessFils[path]}`
         //获取less文件字符串

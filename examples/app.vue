@@ -1,9 +1,9 @@
 <template>
-  <Button />
+    <Button />
 </template>
 
 <script setup>
-import {Button} from 'zh-ui'
+import { Button } from 'zh-ui'
 </script>
 
 <style lang="less" scoped></style>

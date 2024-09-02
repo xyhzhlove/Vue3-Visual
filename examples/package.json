@@ -1,12 +1,16 @@
 {
-  "name": "examples",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "dev": "vite"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "name": "examples",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "main": "index.ts",
+    "scripts": {
+        "dev": "vite",
+        "lint": "eslint",
+        "lint:fix": "eslint --fix",
+        "prettier": "prettier . --write"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
 }
