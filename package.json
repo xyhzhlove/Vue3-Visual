@@ -37,17 +37,6 @@
     "typescript-eslint": "^8.3.0",
     "vite-plugin-eslint": "^1.8.1",
     "zh-ui": "workspace:^"
-  },
-  "husky": {
-     "hooks": {
-        "pre-commit": "lint-staged",
-        "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-      }
-  },
-  "lint-staged": {
-    "*.{js,ts,vue}": [
-      "eslint --fix",
-      "prettier . --write"
-    ]
   }
+  
 }
